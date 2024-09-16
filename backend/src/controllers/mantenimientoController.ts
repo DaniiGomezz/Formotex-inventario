@@ -20,7 +20,7 @@ export const crearMantenimiento = async (req: Request, res: Response) => {
 // Obtener todos los mantenimientos
 export const obtenerMantenimientos = async (req: Request, res: Response) => {
   try {
-    const mantenimientos = await Mantenimiento.find().populate('equipo_id');
+    const mantenimientos = await Mantenimiento.find();
     res.status(200).json(mantenimientos);
   } catch (error) {
     if (error instanceof Error) {
@@ -34,7 +34,7 @@ export const obtenerMantenimientos = async (req: Request, res: Response) => {
 // Obtener un mantenimiento por ID
 export const obtenerMantenimientoPorId = async (req: Request, res: Response) => {
   try {
-    const mantenimiento = await Mantenimiento.findById(req.params.id).populate('equipo_id');
+    const mantenimiento = await Mantenimiento.findById(req.params.id);
     if (!mantenimiento) {
       return res.status(404).json({ message: 'Mantenimiento no encontrado' });
     }
@@ -81,4 +81,3 @@ export const eliminarMantenimiento = async (req: Request, res: Response) => {
     }
   }
 };
-

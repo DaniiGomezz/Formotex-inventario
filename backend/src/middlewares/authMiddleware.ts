@@ -1,24 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const secretKey = process.env.JWT_SECRET || 'your_jwt_secret_key';
+const SECRET_KEY = 'tu_clave_secreta'; // Reemplaza esto con tu clave secreta
 
 export const autenticarUsuario = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(401).json({ message: 'Acceso denegado. No se encontró el token.' });
+    return res.status(401).json({ message: 'Acceso denegado' });
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey as string);  // Asegúrate de que secretKey es de tipo string
-    (req as any).usuario = decoded;
+    const payload = jwt.verify(token, SECRET_KEY);
+    req.user = payload; // Puedes agregar el usuario al request si es necesario
     next();
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(401).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Token inválido.' });
-    }
+    res.status(401).json({ message: 'Token inválido' });
   }
 };

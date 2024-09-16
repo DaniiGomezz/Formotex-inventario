@@ -9,30 +9,42 @@ export const crearDistribucion = async (req: Request, res: Response) => {
     await distribucion.save();
     res.status(201).json(distribucion);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Error inesperado' });
+    }
   }
 };
 
 // Obtener todas las distribuciones
 export const obtenerDistribuciones = async (req: Request, res: Response) => {
   try {
-    const distribuciones = await Distribucion.find().populate('equipo_id');
+    const distribuciones = await Distribucion.find();
     res.status(200).json(distribuciones);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Error inesperado' });
+    }
   }
 };
 
 // Obtener una distribución por ID
 export const obtenerDistribucionPorId = async (req: Request, res: Response) => {
   try {
-    const distribucion = await Distribucion.findById(req.params.id).populate('equipo_id');
+    const distribucion = await Distribucion.findById(req.params.id);
     if (!distribucion) {
       return res.status(404).json({ message: 'Distribución no encontrada' });
     }
     res.status(200).json(distribucion);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Error inesperado' });
+    }
   }
 };
 
@@ -45,7 +57,11 @@ export const actualizarDistribucion = async (req: Request, res: Response) => {
     }
     res.status(200).json(distribucion);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Error inesperado' });
+    }
   }
 };
 
@@ -58,6 +74,10 @@ export const eliminarDistribucion = async (req: Request, res: Response) => {
     }
     res.status(200).json({ message: 'Distribución eliminada con éxito' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Error inesperado' });
+    }
   }
 };
