@@ -8,13 +8,13 @@ import {
 } from '../controllers/distribucionControllers';
 import { autenticarUsuario } from '../middlewares/authMiddleware';
 
-const router = Router();
+const routerDistribucion = Router();
 
 // Rutas protegidas
-router.post('/', autenticarUsuario, crearDistribucion);
-router.get('/', autenticarUsuario, obtenerDistribuciones);
-router.get('/:id', autenticarUsuario, obtenerDistribucionPorId);
-router.put('/:id', autenticarUsuario, actualizarDistribucion);
-router.delete('/:id', autenticarUsuario, eliminarDistribucion);
+routerDistribucion.post('/', autenticarUsuario, crearDistribucion);
+routerDistribucion.get('/', autenticarUsuario, obtenerDistribuciones);
+routerDistribucion.get('/:id', autenticarUsuario, obtenerDistribucionPorId);
+routerDistribucion.put('/:id', autenticarUsuario, actualizarDistribucion);
+routerDistribucion.delete('/:id', autenticarUsuario, eliminarDistribucion);
 
-export default router;
+export default routerDistribucion;

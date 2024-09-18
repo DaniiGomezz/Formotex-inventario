@@ -4,7 +4,7 @@ import { IUsuario } from '../interfaces/IUsuario';
 
 const UsuarioSchema: Schema<IUsuario> = new Schema({
   nombre: { type: String, required: true },
-  correo_electronico: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   telefono: { type: String, required: true },
   rol: { type: String, required: true, enum: ['admin', 'usuario'] }, // Enum para roles
   contrasena: { type: String, required: true }
