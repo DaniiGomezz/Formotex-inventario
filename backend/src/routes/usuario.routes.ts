@@ -5,16 +5,16 @@ import {
   obtenerUsuarioPorId,
   actualizarUsuario,
   eliminarUsuario
-} from '../controllers/usuarioController';
+} from '../controllers/usuarioControllers';
 import { autenticarUsuario } from '../middlewares/authMiddleware';
 
-const router = Router();
+const routerUsuario = Router();
 
 // Rutas protegidas
-router.post('/', autenticarUsuario, crearUsuario);
-router.get('/', autenticarUsuario, obtenerUsuarios);
-router.get('/:id', autenticarUsuario, obtenerUsuarioPorId);
-router.put('/:id', autenticarUsuario, actualizarUsuario);
-router.delete('/:id', autenticarUsuario, eliminarUsuario);
+routerUsuario.post('/', autenticarUsuario, crearUsuario);
+routerUsuario.get('/', autenticarUsuario, obtenerUsuarios);
+routerUsuario.get('/:id', autenticarUsuario, obtenerUsuarioPorId);
+routerUsuario.put('/:id', autenticarUsuario, actualizarUsuario);
+routerUsuario.delete('/:id', autenticarUsuario, eliminarUsuario);
 
-export default router;
+export default routerUsuario;
