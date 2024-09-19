@@ -6,7 +6,7 @@ import {
   actualizarDistribucion,
   eliminarDistribucion
 } from '../controllers/distribucionControllers';
-import { autenticarUsuario } from '../middlewares/authMiddleware';
+import { autenticarUsuario } from '../middlewares/authJWT';
 
 const routerDistribucion = Router();
 

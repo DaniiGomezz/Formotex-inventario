@@ -6,7 +6,7 @@ import {
   actualizarMantenimiento,
   eliminarMantenimiento
 } from '../controllers/mantenimientoController';
-import { autenticarUsuario } from '../middlewares/authMiddleware';
+import { autenticarUsuario } from '../middlewares/authJWT';
 
 const routerMantenimiento = Router();
 

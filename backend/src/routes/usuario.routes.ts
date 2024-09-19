@@ -6,7 +6,7 @@ import {
   actualizarUsuario,
   eliminarUsuario
 } from '../controllers/usuarioControllers';
-import { autenticarUsuario } from '../middlewares/authMiddleware';
+import { autenticarUsuario } from '../middlewares/authJWT';
 
 const routerUsuario = Router();
 

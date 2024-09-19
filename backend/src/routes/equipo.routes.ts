@@ -8,7 +8,7 @@ import {
 
   
 } from '../controllers/equipoController';
-import { autenticarUsuario } from '../middlewares/authMiddleware';
+import { autenticarUsuario } from '../middlewares/authJWT';
 
 const routerEquipos = Router();
 
