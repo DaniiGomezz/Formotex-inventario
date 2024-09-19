@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Distribucion from '../models/Distribucion';
-import { IDistribucion } from '../interfaces/IDistribucion';
+import Distribucion from '../models/schema/Distribucion';
+import { IDistribucion } from '../models/interfaces/IDistribucion';
 
 // Crear una nueva distribución
 export const crearDistribucion = async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Mantenimiento from '../models/Mantenimiento';
-import { IMantenimiento } from '../interfaces/IMantenimiento';
+import { IMantenimiento } from '../models/interfaces/IMantenimiento';
 
 // Crear un nuevo mantenimiento
 export const crearMantenimiento = async (req: Request, res: Response) => {

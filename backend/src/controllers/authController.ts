@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Usuario from '../models/Usuario';  // Asegúrate de que la ruta al modelo es correcta
+import Usuario from '../models/schema/Usuario';  // Asegúrate de que la ruta al modelo es correcta
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 

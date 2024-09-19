@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Equipo from '../models/Equipo';
-import { IEquipo } from '../interfaces/IEquipo';
+import Equipo from '../models/schema/Equipo';
+import { IEquipo } from '../models/interfaces/IEquipo';
 
 // Crear un nuevo equipo
 export const crearEquipo = async (req: Request, res: Response) => {
