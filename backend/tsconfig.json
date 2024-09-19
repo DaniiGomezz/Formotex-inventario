@@ -13,6 +13,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
-  "include": ["src"],         // Incluye todos los archivos dentro de la carpeta `src` y sus subcarpetas
-  "exclude": ["node_modules"] // Excluye la carpeta `node_modules` de la compilación
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
