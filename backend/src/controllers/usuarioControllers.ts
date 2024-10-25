@@ -1,93 +1,127 @@
 import { Request, Response } from 'express';
-import Usuario from '../models/schema/Usuario';
+import { UsuarioService } from '../services/UsuarioService';
 import { IUsuario } from '../models/interfaces/IUsuario';
+import bcrypt from 'bcryptjs';
 
-// Crear un nuevo usuario
-class UsuarioController {
-  public async crearUsuario(req: Request, res: Response): Promise<void> {
+export class UsuarioController {
+  private usuarioService = new UsuarioService();
+
+  // Método para registrar un nuevo usuario
+  async registrarUsuario(req: Request, res: Response): Promise<Response> {
     try {
-      const usuario: IUsuario = new Usuario(req.body);
-      await usuario.save();
-      res.status(201).json(usuario);
+      const { nombre, apellido, dni, email, telefono, password } = req.body;
 
+      // Validar si el email ya está registrado
+      const emailExiste = await this.usuarioService.validarEmail(email);
+      if (emailExiste) {
+        return res.status(400).send('El email ya está registrado');
+      }
+
+      // Hashear la contraseña
+      const hashedPassword = await this.usuarioService.hashearContraseña(password);
+
+      // Crear el nuevo usuario
+      const nuevoUsuario: IUsuario = {
+        nombre,
+        apellido,
+        dni,
+        email,
+        telefono,
+        password: hashedPassword,
+        rol: 'usuario', // Por defecto, el rol es 'usuario'
+      };
+
+      await this.usuarioService.registrarUsuario(nuevoUsuario);
+
+      return res.status(201).send('Usuario registrado con éxito');
     } catch (error) {
-      res.status(500).json("error al crear usuario")
-     
+      console.error('Error al registrar el usuario:', error);
+      return res.status(500).send('Error interno del servidor');
     }
-    
   }
-  public async obtenerUsuarios(req: Request, res: Response): Promise<void>{
-    try {
-      const usuario = await Usuario.find();
-      res.status(200).json(usuario);
-    } catch (error) {
-      res.status(500).json("error al obtener todos los usuarios")
-    }
-  } 
 
+  // Método para obtener un usuario por su ID (solo para superadmin)
+  async obtenerUsuario(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+
+      // Verificar el rol del usuario autenticado
+      const user = res.locals.user;
+      if (user.rol !== 'superadmin') {
+        return res.status(403).json({ message: 'Acceso denegado' });
+      }
+
+      // Obtener el usuario por ID
+      const usuario = await this.usuarioService.obtenerUsuarioPorId(id);
+      if (!usuario) {
+        return res.status(404).send('Usuario no encontrado');
+      }
+
+      return res.json(usuario);
+    } catch (error) {
+      console.error('Error al obtener el usuario:', error);
+      return res.status(500).send('Error interno del servidor');
+    }
+  }
+
+  // Método para actualizar un usuario (solo para superadmin)
+  async actualizarUsuario(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const { nombre, apellido, email, telefono, dni, password } = req.body;
+
+      // Verificar el rol del usuario autenticado
+      const user = res.locals.user;
+      if (user.rol !== 'superadmin') {
+        return res.status(403).json({ message: 'Acceso denegado' });
+      }
+
+      // Verificar si el usuario existe
+      const usuario = await this.usuarioService.obtenerUsuarioPorId(id);
+      if (!usuario) {
+        return res.status(404).send('Usuario no encontrado');
+      }
+
+      // Hashear la nueva contraseña si se proporciona
+      const hashedPassword = password ? await bcrypt.hash(password, 10) : usuario.password;
+
+      // Actualizar el usuario
+      const usuarioActualizado = await Usuario.findByIdAndUpdate(
+        id,
+        { nombre, apellido, email, telefono, dni, password: hashedPassword },
+        { new: true }
+      );
+
+      return res.json(usuarioActualizado);
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error);
+      return res.status(500).send('Error interno del servidor');
+    }
+  }
+
+  // Método para eliminar un usuario (solo para superadmin)
+  async eliminarUsuario(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+
+      // Verificar el rol del usuario autenticado
+      const user = res.locals.user;
+      if (user.rol !== 'superadmin') {
+        return res.status(403).json({ message: 'Acceso denegado' });
+      }
+
+      // Verificar si el usuario existe
+      const usuario = await this.usuarioService.obtenerUsuarioPorId(id);
+      if (!usuario) {
+        return res.status(404).send('Usuario no encontrado');
+      }
+
+      // Eliminar el usuario
+      await this.usuarioService.eliminarUsuario(id);
+      return res.status(200).send('Usuario eliminado con éxito');
+    } catch (error) {
+      console.error('Error al eliminar el usuario:', error);
+      return res.status(500).send('Error interno del servidor');
+    }
+  }
 }
-export const usuarioController = new UsuarioController();
-// Obtener todos los usuarios
-export const obtenerUsuarios = async (req: Request, res: Response) => {
-  try {
-    const usuarios = await Usuario.find();
-    res.status(200).json(usuarios);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Error inesperado' });
-    }
-  }
-};
-
-// Obtener un usuario por ID
-export const obtenerUsuarioPorId = async (req: Request, res: Response) => {
-  try {
-    const usuario = await Usuario.findById(req.params.id);
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-    res.status(200).json(usuario);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Error inesperado' });
-    }
-  }
-};
-
-// Actualizar un usuario
-export const actualizarUsuario = async (req: Request, res: Response) => {
-  try {
-    const usuario = await Usuario.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-    res.status(200).json(usuario);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Error inesperado' });
-    }
-  }
-};
-
-// Eliminar un usuario
-export const eliminarUsuario = async (req: Request, res: Response) => {
-  try {
-    const usuario = await Usuario.findByIdAndDelete(req.params.id);
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-    res.status(200).json({ message: 'Usuario eliminado con éxito' });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: 'Error inesperado' });
-    }
-  }
-};
